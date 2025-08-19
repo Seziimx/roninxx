@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>CS2</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: url("images/nozh.jpg") no-repeat center center;
+      background-size: cover;
+      font-family: Arial, sans-serif;
+      color: #00ffea;
+      text-align: center;
+    }
+    .container {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      gap: 50px;
+    }
+    .info {
+      text-align: center;
+    }
+    .timer {
+      font-size: 100px;
+      font-weight: bold;
+      text-shadow: 0 0 20px #000;
+    }
+    .price {
+      font-size: 80px;
+      font-weight: bold;
+      margin-top: 20px;
+      text-shadow: 0 0 20px #000;
+    }
+    .status {
+      font-size: 50px;
+      font-weight: bold;
+      margin-top: 20px;
+      color: yellow;
+      text-shadow: 0 0 20px #000;
+    }
+    .controls {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.7);
+      padding: 15px;
+      border-radius: 10px;
+    }
+    input, button {
+      font-size: 20px;
+      padding: 8px 15px;
+      margin: 5px;
+      border: none;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img id="weapon" src="images/ak.jpeg" width="600">
+    <div class="info">
+      <div class="timer" id="timer">01:00</div>
+      <div class="price" id="price">1500</div>
+      <div class="status" id="status">Без стопа</div>
+    </div>
+  </div>
+
+  <!-- Панель управления -->
+  <div class="controls">
+    <label>Сумма: <input type="number" id="priceInput" value="1500"></label>
+    <button onclick="setPrice()">Изменить сумму</button>
+    <br>
+    <label>Статус: <input type="text" id="statusInput" value="Без стопа"></label>
+    <button onclick="setStatus()">Изменить статус</button>
+    <br>
+    <button onclick="startTimer()">Старт</button>
+    <button onclick="stopTimer()">Стоп</button>
+    <button onclick="resetTimer()">Сбросить</button>
+    <button onclick="nextWeapon()">След. оружие</button>
+  </div>
+
+  <script>
+    let time = 60;
+    let timerInterval;
+    let running = false;
+    let price = 1500;
+    const priceEl = document.getElementById("price");
+    const priceInput = document.getElementById("priceInput");
+    const timerEl = document.getElementById("timer");
+    const weaponEl = document.getElementById("weapon");
+    const statusEl = document.getElementById("status");
+    const statusInput = document.getElementById("statusInput");
+
+    // список оружий и фонов
+    const weapons = [
+      { img: "images/ak.jpeg", bg: "images/nozh.jpg" },
+      { img: "images/digl.png", bg: "images/digl_bg.jpg" },
+      { img: "images/noc.jpeg", bg: "images/noc_bg.jpg" },
+      { img: "images/nozh.jpg", bg: "images/nozh_bg.jpg" }
+    ];
+    let weaponIndex = 0;
+
+    function updateTimerDisplay() {
+      let minutes = Math.floor(time / 60);
+      let seconds = time % 60;
+      timerEl.textContent =
+        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    function startTimer() {
+      if (running) return;
+      running = true;
+      timerInterval = setInterval(() => {
+        if (time > 0) {
+          time--;
+          updateTimerDisplay();
+        } else {
+          clearInterval(timerInterval);
+          timerEl.textContent = "ВРЕМЯ!";
+          running = false;
+        }
+      }, 1000);
+    }
+
+    function stopTimer() {
+      clearInterval(timerInterval);
+      running = false;
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      time = 60;
+      running = false;
+      updateTimerDisplay();
+    }
+
+    function setPrice() {
+      price = parseInt(priceInput.value) || 0;
+      priceEl.textContent = price;
+    }
+
+    function setStatus() {
+      statusEl.textContent = statusInput.value;
+    }
+
+    function nextWeapon() {
+      weaponIndex = (weaponIndex + 1) % weapons.length;
+      weaponEl.src = weapons[weaponIndex].img;
+      document.body.style.backgroundImage = `url('${weapons[weaponIndex].bg}')`;
+      resetTimer();
+    }
+
+    updateTimerDisplay();
+  </script>
+</body>
+</html>
